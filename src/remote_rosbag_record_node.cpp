@@ -27,6 +27,7 @@ bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   rosbag::RecorderOptions options;
   rp::get("~record_all", options.record_all);
   rp::get("~append_date", options.append_date);
+  rp::get("~prefix", options.prefix);
   rp::get("~name", options.name);
   rp::get("~topics", options.topics);
   // TODO: read more options
