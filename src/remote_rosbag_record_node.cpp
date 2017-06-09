@@ -13,12 +13,13 @@
 
 boost::scoped_ptr< rosbag::Recorder > recorder;
 boost::thread run_thread;
+boost::thread shutdown_thread;
 
 bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   namespace rp = ros::param;
 
   // do nothing if the recorder already started
-  if (recorder) {
+  if (recorder || run_thread.joinable()) {
     ROS_ERROR("Already started");
     return false;
   }
@@ -32,7 +33,7 @@ bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   rp::get("~topics", options.topics);
   // TODO: read more options
 
-  // launch rosbag-record. this thread will continue unless ros::shutdown has been called
+  // launch rosbag-record. this thread will continue unless ros::shutdown() has been called
   ROS_INFO("Start recording");
   recorder.reset(new rosbag::Recorder(options));
   run_thread = boost::thread(&rosbag::Recorder::run, recorder.get());
@@ -40,11 +41,22 @@ bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   return true;
 }
 
-bool stop(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
-  // TODO: delayed shutdown
-  // (because direct call of ros::shutdown() may disconnect the current client)
-  ROS_INFO("Stop recording");
+void sleepAndShutdown() {
+  ros::Duration(0.5).sleep();
   ros::shutdown();
+}
+
+bool stop(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
+  // do nothing if the shutdown already scheduled
+  if (shutdown_thread.joinable()) {
+    ROS_ERROR("Already stopped");
+    return false;
+  }
+
+  // schedule a future call of ros::shutdown()
+  // (because a direct call disconnects the current client)
+  ROS_INFO("Stop recording");
+  shutdown_thread = boost::thread(&sleepAndShutdown);
 
   return true;
 }
@@ -61,13 +73,16 @@ int main(int argc, char *argv[]) {
   ros::ServiceServer start_server(nh.advertiseService("start", start));
   ros::ServiceServer stop_server(nh.advertiseService("stop", stop));
 
-  // run services. this serving will continue unless ros::shutdown has been called
+  // run services. this serving will continue unless ros::shutdown() has been called
   ros::SingleThreadedSpinner spinner;
   spinner.spin(&queue);
 
-  // finalize the rosbag-record thread
+  // finalize the rosbag-record threads
   if (run_thread.joinable()) {
     run_thread.join();
+  }
+  if (shutdown_thread.joinable()) {
+    shutdown_thread.join();
   }
 
   return 0;
