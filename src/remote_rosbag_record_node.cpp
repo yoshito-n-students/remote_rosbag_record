@@ -27,11 +27,46 @@ bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   // read recorder options
   rosbag::RecorderOptions options;
   rp::get("~record_all", options.record_all);
+  rp::get("~regex", options.regex);
+  rp::get("~quiet", options.quiet);
+  // note: as of kinetic, the quiet option looks ignored in rosbag::Recorder :(
   rp::get("~append_date", options.append_date);
+  rp::get("~verbose", options.verbose);
+  {
+    std::string compression;
+    if (rp::get("~compression", compression)) {
+      if (compression == "uncompressed") {
+        options.compression = rosbag::compression::Uncompressed;
+      } else if (compression == "bz2") {
+        options.compression = rosbag::compression::BZ2;
+      } else if (compression == "lz4") {
+        options.compression = rosbag::compression::LZ4;
+      } else {
+        ROS_WARN_STREAM("Unknown compression type: " << compression);
+      }
+    }
+  }
   rp::get("~prefix", options.prefix);
   rp::get("~name", options.name);
   rp::get("~topics", options.topics);
-  // TODO: read more options
+  {
+    std::string exclude_regex;
+    if (rp::get("~exclude_regex", exclude_regex)) {
+      options.do_exclude = true;
+      options.exclude_regex = exclude_regex;
+    }
+  }
+  {
+    int buffer_size;
+    if (rp::get("~buffer_size", buffer_size)) {
+      options.buffer_size = buffer_size;
+    }
+  }
+  rp::get("~node", options.node);
+  // note: this node aims to enable service-triggered logging.
+  //       so does not support the following options that may autonomously stop logging
+  //   trigger / snapshot / chunk_size / limit / split
+  //   / max_size / max_split / max_duration / min_space
 
   // launch rosbag-record. this thread will continue unless ros::shutdown() has been called
   ROS_INFO("Start recording");
