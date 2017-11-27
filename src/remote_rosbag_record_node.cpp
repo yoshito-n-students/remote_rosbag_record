@@ -109,7 +109,8 @@ int main(int argc, char *argv[]) {
   ros::ServiceServer stop_server(nh.advertiseService("stop", stop));
 
   // run services. this serving will continue unless ros::shutdown() has been called
-  ros::SingleThreadedSpinner spinner;
+  //ros::SingleThreadedSpinner spinner;
+  ros::MultiThreadedSpinner spinner(2);
   spinner.spin(&queue);
 
   // finalize the rosbag-record threads
