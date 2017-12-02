@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
   ros::NodeHandle nh;
 
   // rosbag will use the global queue.
-  // to avoid confriction, use local queue for following serveces
+  // to avoid confriction, use local queue for following services
   ros::CallbackQueue queue;
   nh.setCallbackQueue(&queue);
 
