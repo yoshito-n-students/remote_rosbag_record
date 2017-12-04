@@ -17,6 +17,7 @@ find_package(
 ## System dependencies are found with CMake's conventions
 find_package(
   Boost REQUIRED COMPONENTS 
+  regex
   thread
 )
 
@@ -120,7 +121,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -138,8 +139,12 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(
-  remote_rosbag_record_node 
-  src/remote_rosbag_record_node.cpp
+  record
+  src/record.cpp
+)
+add_executable(
+  trigger
+  src/trigger.cpp
 )
 
 ## Rename C++ executable without prefix
@@ -154,7 +159,12 @@ add_executable(
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
-  remote_rosbag_record_node
+  record
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
+target_link_libraries(
+  trigger
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
 )
