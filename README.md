@@ -95,3 +95,4 @@ calls multiple start/stop services at once
 
 ##### Parameters
 * ~regex (string)
+  * regular expression which matches services you want to call
