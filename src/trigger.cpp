@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   boost::regex regex;
   {
     std::string regex_str;
-    if (!ros::param::get("regex", regex_str)) {
+    if (!ros::param::get("~regex", regex_str)) {
       return 0;
     }
     regex = regex_str;
