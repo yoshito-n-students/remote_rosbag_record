@@ -108,7 +108,7 @@ find_package(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES remote_rosbag_record
   CATKIN_DEPENDS rosbag roscpp std_srvs
 #  DEPENDS system_lib
