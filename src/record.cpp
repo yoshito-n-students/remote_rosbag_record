@@ -7,6 +7,7 @@
 #include <ros/spinner.h>
 #include <rosbag/recorder.h>
 #include <std_srvs/Empty.h>
+#include <std_srvs/Trigger.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/thread.hpp>
@@ -96,6 +97,11 @@ bool stop(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   return true;
 }
 
+bool isStarted(std_srvs::Trigger::Request &, std_srvs::Trigger::Response &response) {
+  response.success = recorder || run_thread.joinable();
+  return true;
+}
+
 int main(int argc, char *argv[]) {
   ros::init(argc, argv, "remote_rosbag_record");
   ros::NodeHandle nh;
@@ -107,6 +113,7 @@ int main(int argc, char *argv[]) {
 
   ros::ServiceServer start_server(nh.advertiseService("start", start));
   ros::ServiceServer stop_server(nh.advertiseService("stop", stop));
+  ros::ServiceServer is_started_server(nh.advertiseService("is_started", isStarted));
 
   // run services. this serving will continue unless ros::shutdown() has been called
   ros::SingleThreadedSpinner spinner;
