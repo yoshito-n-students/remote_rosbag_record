@@ -11,6 +11,7 @@ find_package(
   catkin REQUIRED COMPONENTS
   rosbag
   roscpp
+  std_msgs
   std_srvs
 )
 
@@ -110,7 +111,7 @@ find_package(
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES remote_rosbag_record
-  CATKIN_DEPENDS rosbag roscpp std_srvs
+  CATKIN_DEPENDS rosbag roscpp std_msgs std_srvs
 #  DEPENDS system_lib
 )
 
