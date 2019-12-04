@@ -93,6 +93,12 @@ void sleepAndShutdown() {
 }
 
 bool stop(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
+  // do nothing if recording never started
+  if (!recorder && !run_thread.joinable()) {
+    ROS_ERROR("Never started");
+    return false;
+  }
+
   // do nothing if the shutdown already scheduled
   if (shutdown_thread.joinable()) {
     ROS_ERROR("Already stopped");
@@ -119,6 +125,7 @@ int main(int argc, char *argv[]) {
   nh.setCallbackQueue(&queue);
 
   is_recording_publisher = nh.advertise< std_msgs::Bool >("is_recording", 1, true);
+  publishIsRecording(false);
   ros::ServiceServer start_server(nh.advertiseService("start", start));
   ros::ServiceServer stop_server(nh.advertiseService("stop", stop));
 
