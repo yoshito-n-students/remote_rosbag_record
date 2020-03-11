@@ -3,9 +3,11 @@
 #include <ros/init.h>
 #include <ros/node_handle.h>
 #include <ros/param.h>
+#include <ros/publisher.h>
 #include <ros/service_server.h>
 #include <ros/spinner.h>
 #include <rosbag/recorder.h>
+#include <std_msgs/Bool.h>
 #include <std_srvs/Empty.h>
 
 #include <boost/scoped_ptr.hpp>
@@ -14,6 +16,13 @@
 boost::scoped_ptr< rosbag::Recorder > recorder;
 boost::thread run_thread;
 boost::thread shutdown_thread;
+ros::Publisher is_recording_publisher;
+
+void publishIsRecording(const bool is_recording) {
+  std_msgs::BoolPtr msg(new std_msgs::Bool());
+  msg->data = is_recording;
+  is_recording_publisher.publish(msg);
+}
 
 bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   namespace rp = ros::param;
@@ -68,6 +77,8 @@ bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
   //   trigger / snapshot / chunk_size / limit / split
   //   / max_size / max_split / max_duration / min_space
 
+  publishIsRecording(true);
+
   // launch rosbag-record. this thread will continue unless ros::shutdown() has been called
   ROS_INFO("Start recording");
   recorder.reset(new rosbag::Recorder(options));
@@ -82,11 +93,19 @@ void sleepAndShutdown() {
 }
 
 bool stop(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
+  // do nothing if recording never started
+  if (!recorder && !run_thread.joinable()) {
+    ROS_ERROR("Never started");
+    return false;
+  }
+
   // do nothing if the shutdown already scheduled
   if (shutdown_thread.joinable()) {
     ROS_ERROR("Already stopped");
     return false;
   }
+
+  publishIsRecording(false);
 
   // schedule a future call of ros::shutdown()
   // (because a direct call disconnects the current client)
@@ -105,6 +124,8 @@ int main(int argc, char *argv[]) {
   ros::CallbackQueue queue;
   nh.setCallbackQueue(&queue);
 
+  is_recording_publisher = nh.advertise< std_msgs::Bool >("is_recording", 1, true);
+  publishIsRecording(false);
   ros::ServiceServer start_server(nh.advertiseService("start", start));
   ros::ServiceServer stop_server(nh.advertiseService("stop", stop));
 
