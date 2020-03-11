@@ -194,7 +194,7 @@ install(TARGETS record trigger
 ## Mark cpp header files for installation
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
+  FILES_MATCHING PATTERN "*.hpp"
 )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
