@@ -1,3 +1,5 @@
+#include <string>
+
 #include <ros/callback_queue.h>
 #include <ros/console.h>
 #include <ros/init.h>

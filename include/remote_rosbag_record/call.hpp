@@ -21,7 +21,8 @@ inline static void call(const boost::regex &expression, const bool verbose = tru
     // call ros master api to get services info
     XmlRpc::XmlRpcValue args, result, payload;
     args[0] = ros::this_node::getName();
-    if (!ros::master::execute("getSystemState", args, result, payload, false)) {
+    if (!ros::master::execute("getSystemState", args, result, payload,
+                              /* wait_for_master = */ false)) {
       throw XmlRpc::XmlRpcException("getSystemState");
     }
 
@@ -35,10 +36,10 @@ inline static void call(const boost::regex &expression, const bool verbose = tru
       std_srvs::Empty srv;
       if (ros::service::call(name, srv)) {
         if (verbose) {
-          ROS_INFO_STREAM("Called " << name);
+          ROS_INFO_STREAM("Called '" << name << "'");
         }
       } else {
-        ROS_ERROR_STREAM("Failed to call " << name);
+        ROS_ERROR_STREAM("Failed to call '" << name << "'");
       }
     }
   } catch (const XmlRpc::XmlRpcException &error) {

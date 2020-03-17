@@ -1,3 +1,5 @@
+#include <string>
+
 #include <ros/init.h>
 #include <ros/node_handle.h>
 #include <ros/param.h>
