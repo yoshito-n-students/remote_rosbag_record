@@ -16,7 +16,10 @@
 
 namespace remote_rosbag_record {
 
-inline static void call(const boost::regex &expression, const bool verbose = true) {
+// try calling services matching the given expression
+// and return number of successfull calls
+inline static std::size_t call(const boost::regex &expression, const bool verbose = true) {
+  std::size_t n_success(0);
   try {
     // call ros master api to get services info
     XmlRpc::XmlRpcValue args, result, payload;
@@ -33,18 +36,22 @@ inline static void call(const boost::regex &expression, const bool verbose = tru
       if (!boost::regex_match(name, expression)) {
         continue;
       }
+
       std_srvs::Empty srv;
-      if (ros::service::call(name, srv)) {
-        if (verbose) {
-          ROS_INFO_STREAM("Called '" << name << "'");
-        }
-      } else {
+      if (!ros::service::call(name, srv)) {
         ROS_ERROR_STREAM("Failed to call '" << name << "'");
+        continue;
       }
+
+      if (verbose) {
+        ROS_INFO_STREAM("Called '" << name << "'");
+      }
+      ++n_success;
     }
   } catch (const XmlRpc::XmlRpcException &error) {
-    ROS_ERROR_STREAM("Faild to get service names: " << error.getMessage());
+    ROS_ERROR_STREAM("Error caught on calling services: " << error.getMessage());
   }
+  return n_success;
 }
 
 } // namespace remote_rosbag_record
