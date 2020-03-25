@@ -2,7 +2,6 @@
 #define REMOTE_ROSBAG_RECORD_CALL
 
 #include <string>
-#include <vector>
 
 #include <ros/console.h>
 #include <ros/master.h>
