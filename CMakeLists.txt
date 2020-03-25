@@ -11,6 +11,7 @@ find_package(
   catkin REQUIRED COMPONENTS
   rosbag
   roscpp
+  sensor_msgs
   std_msgs
   std_srvs
 )
@@ -111,7 +112,7 @@ find_package(
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES remote_rosbag_record
-  CATKIN_DEPENDS rosbag roscpp std_msgs std_srvs
+  CATKIN_DEPENDS rosbag roscpp sensor_msgs std_msgs std_srvs
 #  DEPENDS system_lib
 )
 
@@ -147,6 +148,10 @@ add_executable(
   trigger
   src/trigger.cpp
 )
+add_executable(
+  joy_listener
+  src/joy_listener.cpp
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -166,6 +171,11 @@ target_link_libraries(
 )
 target_link_libraries(
   trigger
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
+target_link_libraries(
+  joy_listener
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
 )
