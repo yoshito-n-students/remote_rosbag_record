@@ -195,7 +195,7 @@ target_link_libraries(
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS record trigger
+install(TARGETS record trigger joy_listener
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

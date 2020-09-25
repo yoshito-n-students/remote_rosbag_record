@@ -2,6 +2,10 @@
 Changelog for package remote_rosbag_record
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.4 (2020-XX-XX)
+------------------
+* Install joy_listener
+
 0.0.3 (2020-09-26)
 ------------------
 * Avoid an exception from class_loader when record node finishes
