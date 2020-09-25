@@ -143,5 +143,10 @@ int main(int argc, char *argv[]) {
     shutdown_thread.join();
   }
 
+  // manually destroy the recorder here because it seems to contain a plugin loaded by class_loader.
+  // that plugin must be destroyed before the class_loader is destroyed.
+  // destroying the recorder here is a workarond.
+  recorder.reset();
+
   return 0;
 }
