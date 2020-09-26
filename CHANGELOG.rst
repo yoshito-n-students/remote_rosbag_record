@@ -2,9 +2,10 @@
 Changelog for package remote_rosbag_record
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.0.4 (2020-XX-XX)
+0.0.4 (2020-09-26)
 ------------------
 * Install joy_listener
+* Change cmake minimum version from 2.8.3 to 3.0.2 to suppress CMP0048 warning
 
 0.0.3 (2020-09-26)
 ------------------
