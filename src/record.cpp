@@ -143,9 +143,11 @@ int main(int argc, char *argv[]) {
     shutdown_thread.join();
   }
 
-  // manually destroy the recorder here because it seems to contain a plugin loaded by class_loader.
-  // that plugin must be destroyed before the class_loader is destroyed.
-  // destroying the recorder here is a workarond.
+  // manually free the recorder here.
+  // the recorder contains a plugin loaded by class_loader so must be freed
+  // before static variables in class_loader library (or get an exception).
+  // these static variables will be destroyed before the gloval variable recorder 
+  // because they are allocated when the recorder is allocated in start().
   recorder.reset();
 
   return 0;

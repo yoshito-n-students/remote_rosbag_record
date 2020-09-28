@@ -1,10 +1,9 @@
 #include <string>
 
+#include <remote_rosbag_record/call.hpp>
 #include <ros/init.h>
 #include <ros/node_handle.h>
 #include <ros/param.h>
-
-#include <remote_rosbag_record/call.hpp>
 
 #include <boost/regex.hpp>
 
@@ -17,13 +16,14 @@ int main(int argc, char *argv[]) {
   {
     std::string regex_str;
     if (!ros::param::get("~regex", regex_str)) {
+      ROS_ERROR("param '~regex' is required");
       return 0;
     }
     regex = regex_str;
   }
 
   // call all services which match the regex
-  remote_rosbag_record::call(regex);
+  remote_rosbag_record::call(regex, ros::param::param("~verbose", true));
 
   return 0;
 }
