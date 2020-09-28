@@ -101,6 +101,8 @@ calls multiple start/stop services at once
 ##### Parameters
 * ~regex (string, required)
   * regular expression which matches services you want to call
+* ~verbose (bool, default: true)
+  * verbose console output when calling services
 
 ### joy_listener
 subscribes joystick messages and calls start/stop services when a specified button is pressed
@@ -118,4 +120,4 @@ subscribes joystick messages and calls start/stop services when a specified butt
 * ~stop_regex (string, default: "<node's namespace>/stop")
   * regular expression which matches stop services
 * ~verbose (bool, default: true)
-  * verbose console output when calling a service
+  * verbose console output when calling services

@@ -2,6 +2,10 @@
 Changelog for package remote_rosbag_record
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.5 (2020-XX-XX)
+------------------
+* Add verbose option to trigger node
+
 0.0.4 (2020-09-26)
 ------------------
 * Install joy_listener
