@@ -1,0 +1,40 @@
+name: Build
+on:
+  push:
+    branches:
+      - devel
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        rosdistro: [kinetic, melodic, noetic]
+    runs-on: ubuntu-latest
+    container:
+      image: ros:${{ matrix.rosdistro }}-ros-base
+    defaults:
+      run:
+        shell: bash
+    steps:
+      # System update
+      - name: Run apt-upgrade
+        run: |
+          sudo apt update
+          sudo apt --yes upgrade
+      # Checkout
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: src/remote_rosbag_record
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          source /opt/ros/${{ matrix.rosdistro }}/setup.bash
+          sudo apt update
+          rosdep update
+          sudo rosdep install --default-yes -r --ignore-src --from-paths src --rosdistro ${{ matrix.rosdistro }}
+      # Build
+      - name: Build
+        run: |
+          source /opt/ros/${{ matrix.rosdistro }}/setup.bash
+          catkin_make
