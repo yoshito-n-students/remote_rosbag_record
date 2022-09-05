@@ -10,7 +10,7 @@ ROS nodes that start/stop rosbag-record by a remote trigger
     <include file="console.machine"/>
 
     ... other console nodes ...
-    
+
     <node name="console-record" pkg="remote_rosbag_record" type="record" respawn="true">
       <rosparam file="console_topics.yml"/>
       <param name="prefix" value="console"/>
@@ -29,7 +29,7 @@ ROS nodes that start/stop rosbag-record by a remote trigger
       <param name="apped_date" value="true"/>
     </node>
   </group>
-  
+
 </launch>
 ```
 
@@ -94,6 +94,10 @@ See http://wiki.ros.org/rosbag/Commandline#record
 * ~buffer_size (int)
 * ~exclude_regex (string)
 * ~node (string)
+* ~split_duration (double)
+  * duration in seconds to record before splitting to a new bagfile
+* ~split_size (int)
+  * size in MB to record before splitting to a new bagfile
 
 ### trigger
 calls multiple start/stop services at once
