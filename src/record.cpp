@@ -74,6 +74,22 @@ bool start(std_srvs::Empty::Request &, std_srvs::Empty::Response &) {
     }
   }
   rp::get("~node", options.node);
+  // Support automatic splitting of rosbag file in duration chunks
+  double duration = -1.0;
+  rp::get("~split_duration", duration);
+  if (duration > 0.0) {
+    options.split = true;
+    options.repeat_latched = true;
+    options.max_duration = ros::Duration(duration);
+  }
+  // Support automatic splitting of rosbag file in size chunks
+  int bagsize = 0;
+  rp::get("~split_size", bagsize);
+  if (bagsize > 0) {
+    options.split = true;
+    options.repeat_latched = true;
+    options.max_size = bagsize * 1048576;
+  }
   // note: this node aims to enable service-triggered logging.
   //       so does not support the following options that may autonomously stop logging
   //   trigger / snapshot / chunk_size / limit / split
@@ -146,7 +162,7 @@ int main(int argc, char *argv[]) {
   // manually free the recorder here.
   // the recorder contains a plugin loaded by class_loader so must be freed
   // before static variables in class_loader library (or get an exception).
-  // these static variables will be destroyed before the gloval variable recorder 
+  // these static variables will be destroyed before the gloval variable recorder
   // because they are allocated when the recorder is allocated in start().
   recorder.reset();
 
